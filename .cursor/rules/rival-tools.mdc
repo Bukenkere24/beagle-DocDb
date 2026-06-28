@@ -1,0 +1,19 @@
+---
+description: Rival/CortexOne Function tool standards for Beagle builders
+globs: "**/*.py"
+alwaysApply: true
+---
+
+# Rival / CortexOne Function Contract
+
+- Runtime: Python 3.13
+- Entry point: `cortexone_handler(event, context)` returning `{"statusCode": int, "body": ...}`
+- `event` is the inner request object (the HTTP body is `{"event": {...}}`)
+- Validate and default every field read from `event`
+- Map client errors to 400, unexpected failures to 500
+- Never hardcode or log API keys; read BYOK secrets from `os.environ`
+- Respect run limits: 512 MB RAM, 300 s timeout, ephemeral filesystem
+- Cap unbounded input; set `stats.truncated = true` when input is clipped
+- Do not rely on persistence across runs; use external stores for state
+- Keep paid tool pricing at or below $0.25 per run
+- Publish path: paste code + `requirements.txt` into Studio Tool Editor, add Environment Secrets, recreate test cases, then publish a new immutable version
