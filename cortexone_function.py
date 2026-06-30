@@ -164,7 +164,9 @@ def _process_documents(parsed: dict[str, Any]) -> dict[str, Any]:
         doc_summary_text = ""
         doc_key_points: list[str] = []
         if extract_cfg["summary"]:
-            doc_summary_text, doc_key_points = summarize_document(text)
+            doc_summary_text, doc_key_points = summarize_document(
+                text, mime_type=doc["mime_type"]
+            )
             doc_summaries.append(
                 {
                     "doc_id": doc["id"],
@@ -186,7 +188,7 @@ def _process_documents(parsed: dict[str, Any]) -> dict[str, Any]:
         for index, chunk_body in enumerate(raw_chunks):
             body = chunk_body
             if extract_cfg["embeddings_ready"]:
-                body = prepare_embeddings_ready(body)
+                body = prepare_embeddings_ready(body, mime_type=doc["mime_type"])
 
             metadata = (
                 extract_metadata(
@@ -200,7 +202,11 @@ def _process_documents(parsed: dict[str, Any]) -> dict[str, Any]:
 
             chunk_summary = ""
             if extract_cfg["summary"]:
-                chunk_summary = summarize_chunk(chunk_body, doc_summary_text)
+                chunk_summary = summarize_chunk(
+                    chunk_body,
+                    doc_summary_text,
+                    mime_type=doc["mime_type"],
+                )
 
             chunks_out.append(
                 {
